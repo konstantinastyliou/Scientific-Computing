@@ -1,0 +1,62 @@
+ClearAll[Phi]; 
+f[x_] := 1/(1 + 25*x^2)
+n = 2; 
+I0 = Integrate[(f[x]*ChebyshevT[0, x])/Sqrt[1 - x^2], {x, -1, 1}]; 
+a0 = I0/Pi; 
+phi = a0*ChebyshevT[0, x]; 
+Print["Για j = 0: p0(x) = ", ChebyshevT[0, x], " | a0 = ", a0]; 
+Do[T = Integrate[(f[x]*ChebyshevT[j, x])/Sqrt[1 - x^2], {x, -1, 1}]; 
+ aj = (2*T)/Pi; Print["Για j = ", j, ": p", j, "(x) = ", 
+      ChebyshevT[j, x], " | a", j, " = ", aj]; 
+ phi = phi + aj*ChebyshevT[j, x], {j, 1, n}]
+Phi[x_] = phi; 
+Print["Φ(x) = ", Expand[Phi[x]]]; 
+Error = Sqrt[Integrate[(f[x] - Phi[x])^2/Sqrt[1 - x^2], {x, -1, 1}]]; 
+Print["E = ", N[Error]]; 
+Plot[{Phi[x]}, {x, -1, 1}, Frame -> True, Axes -> False, 
+ PlotStyle -> {Red}]
+
+ClearAll[Phi]; 
+f[x_] := Exp[Cos[x]]
+n = 2; 
+I0 = NIntegrate[(f[x]*ChebyshevT[0, x])/Sqrt[1 - x^2], {x, -1, 1}]; 
+Gj0 = Pi; 
+a0 = I0/Gj0; 
+phi = a0*ChebyshevT[0, x]; 
+Print["Για j = 0: p0(x) = ", ChebyshevT[0, x], " | a0 = ", a0]; 
+Do[T = NIntegrate[(f[x]*ChebyshevT[j, x])/Sqrt[1 - x^2], {x, -1, 1}]; 
+ Gj = Pi/2; aj = T/Gj; 
+    Print["Για j = ", j, ": p", j, "(x) = ", ChebyshevT[j, x], 
+  " | a", j, " = ", aj]; phi = phi + aj*ChebyshevT[j, x], {j, 1, n}]
+Phi[x_] = phi; 
+Print["Φ(x) = ", Phi[x]]; 
+Error = Sqrt[NIntegrate[(f[x] - Phi[x])^2/Sqrt[1 - x^2], {x, -1, 1}]]; 
+Print["E = ", Error]; 
+Plot[{f[x], Phi[x]}, {x, -1, 1}, Frame -> True, Axes -> False, 
+ PlotStyle -> {Black, Red}]
+
+
+ClearAll[Phi];
+f[x_] := 1/(1 + 25 x^2)
+n = 2;
+conv = {x -> Cos[θ]};
+I0 = \!\(
+\*SubsuperscriptBox[\(\[Integral]\), \(0\), \(π\)]\(\((f[x]\ Cos[
+        0\ θ] /.  conv)\) \[DifferentialD]θ\)\);
+a0 = I0/π;
+phi = a0 ChebyshevT[0, x];
+Print["Για j = 0: p0(x) = ", ChebyshevT[0, x], " | a0 = ", a0];
+Do[T = \!\(
+\*SubsuperscriptBox[\(\[Integral]\), \(0\), \(π\)]\(\((f[x]\ Cos[
+        j\ θ] /.  conv)\) \[DifferentialD]θ\)\); aj = (2 T)/π; 
+ Print["Για j = ", j, ": p", j, "(x) = ", ChebyshevT[j, x], " | a", j,
+   " = ", aj]; phi = phi + aj ChebyshevT[j, x];, {j, 1, n}]
+Phi[x_] = phi;
+Print["Φ(x) = ", Expand[Phi[x]]];
+Error = Sqrt[\!\(
+\*SubsuperscriptBox[\(\[Integral]\), \(-1\), \(1\)]\(
+\*FractionBox[
+SuperscriptBox[\((f[x] - Phi[x])\), \(2\)], 
+SqrtBox[\(1 - 
+\*SuperscriptBox[\(x\), \(2\)]\)]] \[DifferentialD]x\)\)];
+Print["E = ", N[Error]];

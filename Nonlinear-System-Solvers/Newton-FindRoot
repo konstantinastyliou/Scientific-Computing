@@ -1,1 +1,46 @@
+f[x_, y_] := x^2 + y^2 - 1
+g[x_, y_] := x^2 - y
 
+
+root = FindRoot[{f[x, y] == 0, g[x, y] == 0}, {{x, 1}, {y, 1}}];
+{xStar, yStar} = {x, y} /. root;
+
+
+{xn, yn} = {1.0, 1.0};
+eps = 10^-14;
+n = 1;
+
+
+While[True, 
+ J = N[{{D[f[x, y], x], D[f[x, y], y]}, {D[g[x, y], x], 
+      D[g[x, y], y]}} /. {x -> xn, y -> yn}];
+ F = N[{f[xn, yn], g[xn, yn]}];
+ {en, dn} = LinearSolve[J, F];
+ Print["Επανάληψη ", n, ": {xn, yn} = {", xn, ", ", yn, "}"];
+ Print["Απόσταση από ρίζα: ", Sqrt[(xn - xStar)^2 + (yn - yStar)^2]];
+ If[Max[Abs[en], Abs[dn]] < eps, Break[]];
+ xn = xn - en;
+ yn = yn - dn;
+ n++;]
+
+Print["\nΤελική λύση (Newton): {", xn, ", ", yn, "}"];
+Print["Πραγματική ρίζα (FindRoot): {", xStar, ", ", yStar, "}"];
+
+F = {x^2 + y^2 + z^2 - 1, x^2 - y, x - z};
+vars = {x, y, z};
+
+sol = {1.0, 1.0, 1.0};
+eps = 10^-14;
+
+For[n = 1, n <= 10, n++,
+ J = Outer[D, F, vars] /. Thread[vars -> sol];
+ RHS = F /. Thread[vars -> sol];
+ delta = LinearSolve[J, RHS];
+ If[Max[Abs[delta]] < eps, Break[]];
+ sol = sol - delta;]
+Print["Τελική λύση (Newton): ", sol];
+rootFind = FindRoot[F == {0, 0, 0}, {x, 1}, {y, 1}, {z, 1}];
+solFind = {x, y, z} /. rootFind;
+Print["Τελική λύση (FindRoot): ", solFind];
+
+diff = Norm[sol - solFind];

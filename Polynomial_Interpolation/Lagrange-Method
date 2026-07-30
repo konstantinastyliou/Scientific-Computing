@@ -1,0 +1,20 @@
+F[x_] := 34.96 - 36.1836 x + 18.6885 x^2 - 3.52078 x^3 + 0.255838 x^4;
+xpoints = {3.2, 2.7, 1.0, 4.8, 5.6};
+M = Length[xpoints];
+data = Table[{xpoints[[i]], F[xpoints[[i]]]}, {i, 1, M}];
+xV = data[[All, 1]];
+fxV = data[[All, 2]];
+n = M - 1; 
+L[i_, x_] := 
+  Product[(x - xV[[j + 1]])/(xV[[i + 1]] - xV[[j + 1]]), {j, 
+    Select[Range[0, n], # != i &]}];
+p[x_] = Sum[fxV[[i + 1]]*L[i, x], {i, 0, n}];
+CoefficientsList = CoefficientList[p[x], x];
+verificationMatrix = Table[L[i, xV[[j + 1]]], {i, 0, n}, {j, 0, n}];
+Print["δij :", MatrixForm[verificationMatrix]];
+Print[Expand[p[x]]];
+Plot[{F[x], p[x]}, {x, Min[xV], Max[xV]}, 
+ PlotStyle -> {Directive[Blue, Full], Directive[Red, Dashed]}, 
+ Epilog -> {Black, PointSize[Large], Point[data]}, 
+ PlotLegends -> {"F(x)", "p(x)"}, GridLines -> {xV, fxV}, 
+ PlotRange -> All, PlotLabel -> "F(x) και Lagrange"]

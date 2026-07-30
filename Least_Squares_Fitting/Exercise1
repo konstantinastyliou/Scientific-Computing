@@ -1,0 +1,22 @@
+xData = {0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.9, 1.0};
+fData = {2.9, 2.8, 2.7, 2.3, 2.1, 2.1, 1.7, 1.5, 1.4};
+
+points = Transpose[{xData, fData}];
+p1 = Fit[points, {1, x}, x] ;      
+p2 = Fit[points, {1, x, x^2}, x];    
+p3 = Fit[points, {1, x, x^2, x^3}, x];
+p4 = Fit[points, {1, x, x^2, x^3, x^4}, x];
+degrees = {1, 2, 3, 4};
+
+Do[p = Fit[points, Table[x^i, {i, 0, n}], x];
+ removals = fData - (p /. x -> xData);
+ epsilon = Sqrt[Total[removals^2]];
+ diaspora = epsilon^2/(9 + 1 - n);
+ Print["Για n = ", n];
+ Print[ "Εχω p = ", p];
+ Print["(ε): ", epsilon];
+ Print["(σ^2): ", diaspora];
+ , {n, degrees}]
+Show[ListPlot[points, PlotStyle -> {Red, PointSize[Large]}], 
+ Plot[{p1, p2, p3, p4}, {x, 0, 1}, PlotLegends -> "Expressions"] ]
+Show[Plot[p4, {x, 0, 1}]]

@@ -1,0 +1,13 @@
+xpoints = {{3.2, 22.0}, {2.7, 17.8}, {1.0, 14.2}, {4.8, 38.3}, {5.6, 
+    51.7}}; 
+n = 5;
+points = Take[xpoints, n];
+{xV, fxV} = Transpose[points]; (*αλλαγη απο ζευγη σε λιστες*)
+Voldemort = 
+  Table[xV[[i]]^j, {i, 1, n}, {j, 0, 
+    n - 1}]; (*γραμμες i απο 1 εως n και στηλες j απο 0 εως n-1*)
+coeff = LinearSolve[Voldemort, fxV];
+pol = Sum[coeff[[i]]*x^(i - 1), {i, 1, n}]; (*Αθροισμα πολυωνυμου*)
+Print["Πίνακας Voldemort: ", MatrixForm[Voldemort]];
+Print["Διάνυσμα Συντελεστών a (a0 έως a", n - 1, "):", coeff];
+Print["Το Πολυώνυμο p(x):", (Expand[pol])];

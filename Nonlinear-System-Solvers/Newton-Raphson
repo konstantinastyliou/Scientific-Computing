@@ -1,0 +1,20 @@
+F = {x^2 + y^2 + z^2 - 1, x^2 - y, x - z};
+vars = {x, y, z};
+
+sol = {1.0, 1.0, 1.0};
+eps = 10^-14;
+
+Jac := (D[F, {vars}] /. Thread[vars -> sol]);
+
+RHS := (F /. Thread[vars -> sol]);
+For[n = 1, n <= 10, n++,
+ delta = LinearSolve[Jac, RHS];
+ If[Max[Abs[delta]] < eps, Break[]];
+ sol = sol - delta;]
+Print["Τελική λύση (Newton): ", sol];
+rootFind = FindRoot[F == {0, 0, 0}, {x, 1}, {y, 1}, {z, 1}];
+solFind = {x, y, z} /. rootFind;
+Print["Τελική λύση (FindRoot): ", solFind];
+
+diff = Norm[sol - solFind];
+Print["Διαφορα: " , diff];

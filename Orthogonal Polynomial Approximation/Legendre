@@ -1,0 +1,26 @@
+P[x_, n_] := Sum[Subscript[a, k]*LegendreP[k, x], {k, 0, n}]; 
+f[x_] := Cos[Pi*x]; 
+Subscript[a, j_] := (j + 1/2)*
+   Integrate[f[x]*LegendreP[j, x], {x, -1, 1}]; 
+For[i = 0, i <= 5, Print["a", i, "=", Subscript[a, i]]; i++]; 
+sol = Expand[P[x, i - 1]]; 
+Print["Φ(χ)=", sol]
+Plot[{sol, f[x]}, {x, -1, 1}, Frame -> True, Axes -> False, 
+ PlotStyle -> {Red, Black}]
+
+P[x_, n_] := \!\(
+\*UnderoverscriptBox[\(\[Sum]\), \(k = 0\), \(n\)]\(
+\*SubscriptBox[\(a\), \(k\)]\ LegendreP[k, x]\)\);
+f[x_] := Exp[Cos[x]];
+Subscript[a, j_] := 
+  Subscript[a, 
+   j] = (j + 1/2) Chop[NIntegrate[f[x] LegendreP[j, x], {x, -1, 1}]];
+For[i = 0, i <= 6, Print[Subscript["a", i], " = ", Subscript[a, i]]; 
+  i++];
+sol = P[x, i - 1];
+Print["Φ(x) = ", sol];
+Error = Sqrt[NIntegrate[(f[x] - sol)^2, {x, -1, 1}]];
+Print["E = ", Error];
+Plot[{sol, f[x]}, {x, -1, 1}, Frame -> True, Axes -> False, 
+ PlotStyle -> {Red, Directive[Black, Dashed, Thick]}, 
+ PlotLegends -> {"\[Phi](x) ", "f(x)"}]

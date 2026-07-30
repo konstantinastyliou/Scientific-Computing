@@ -1,0 +1,54 @@
+(*Lagrange*)
+f[x_] := 1/(1 + 25*x^2);
+a = 0; b = 5;
+n = 20;
+xBar[x_] := 2*(x - a)/(b - a) - 1;
+nodesX = Subdivide[a, b, n];
+nodesT = xBar[nodesX];
+data = Table[{nodesT[[i]], f[nodesX[[i]]]}, {i, 1, n + 1}];
+L[i_] := Function[tVal, 
+   Product[If[i == j, 
+     1, (tVal - nodesT[[j]])/(nodesT[[i]] - nodesT[[j]])], {j, 1, 
+     n + 1}]];
+p[t_] := Sum[data[[i, 2]]*L[i][t], {i, 1, n + 1}];
+poly = Simplify[N[p[t]]];
+Print["Το πολυώνυμο Lagrange"];
+Print[poly];
+Plot[Evaluate[{f[a + (t + 1)/2*(b - a)], p[t]}], {t, -1, 1}, 
+ PlotStyle -> {Directive[Blue, Thick], Directive[Red, Dashed, Thick]},
+  Epilog -> {Black, PointSize[0.02], Point[data]}, 
+ PlotLegends -> {"f(x)", "p(t) Lagrange"}, AxesLabel -> {"t", "y"}, 
+ PlotLabel -> "Παρεμβολή Lagrange", GridLines -> Automatic]
+
+(*Hermite*)
+f[x_] := 1/(1 + 25*x^2);
+df[x_] := f'[x];
+a = 0; b = 5; n = 10;
+t[x_] := 2 (x - a)/(b - a) - 1;
+k = (b - a)/2;
+nodesX = Table[a + (i - 1)*(b - a)/n, {i, 1, n + 1}];
+nodesT = Table[t[nodesX[[i]]], {i, 1, n + 1}];
+yV = Table[f[nodesX[[i]]], {i, 1, n + 1}];
+dyV = Table[df[nodesX[[i]]]*k, {i, 1, n + 1}];
+L[i_] := Function[tt, 
+   Product[If[j == i, 
+     1, (tt - nodesT[[j]])/(nodesT[[i]] - nodesT[[j]])], {j, 1, 
+     n + 1}]];
+dL = Table[D[L[i][tt], tt] /. tt -> nodesT[[i]], {i, 1, n + 1}];
+
+Hi[i_] := 
+  Function[tt, (1 - 2 (tt - nodesT[[i]]) dL[[i]]) (L[i][tt])^2];
+HiHat[i_] := Function[tt, (tt - nodesT[[i]]) (L[i][tt])^2];
+pH[tt_] := 
+  Sum[yV[[i]] Hi[i][tt] + dyV[[i]] HiHat[i][tt], {i, 1, n + 1}];
+Print["Το πολυώνυμο Hermite "];
+Print[Simplify[N[pH[t]]]];
+
+Plot[Evaluate[{f[a + (t + 1)/2*(b - a)], pH[t], 
+   df[a + (t + 1)/2*(b - a)]*k}], {t, -1, 1}, 
+ PlotStyle -> {Directive[Blue, Thick], Directive[Red, Dashed, Thick], 
+   Directive[Green, Thick]}, 
+ Epilog -> {Black, PointSize[0.02], Point[Transpose[{nodesT, yV}]]}, 
+ PlotLegends -> {"f(x)", "p(t) Hermite", "df[x]"}, 
+ AxesLabel -> {"t", "y"}, PlotLabel -> "Παρεμβολή Hermite", 
+ GridLines -> Automatic]

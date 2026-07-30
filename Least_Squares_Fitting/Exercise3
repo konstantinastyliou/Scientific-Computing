@@ -1,0 +1,24 @@
+data = {{77.7, 1.2, 166}, {76.7, 1.6, 169}, {77.4, 1.8, 137}, {82.9, 
+    2.4, 84}, {72.4, 3.7, 70}, {82.7, 3.5, 45}, {66.4, 2.2, 
+    201}, {63.7, 1.4, 134}, {72.1, 1.6, 149}, {77.8, 1.7, 147}};
+
+model = Fit[data, {1, x, x^2, y}, {x, y}];
+
+a = Coefficient[model, x, 0] /. y -> 0;
+b = Coefficient[model, x, 1];
+c = Coefficient[model, x, 2];
+d = Coefficient[model, y, 1];
+
+pred = Apply[Function[{xi, yi, fi}, model /. {x -> xi, y -> yi}], 
+   data, {1}];
+realV = data[[All, 3]];
+epsilon = Sqrt[Total[(realV - pred)^2]];
+
+diaspora = epsilon^2/(10 + 1 - 4);
+
+Print["Βέλτιστη επιφάνεια  ", model];
+Print["(ε = ", epsilon];
+Print["(σ^2) = ", diaspora];
+Show[ListPointPlot3D[data, PlotStyle -> {Red, PointSize[0.03]}], 
+ Plot3D[model, {x, 60, 90}, {y, 1, 4}, PlotStyle -> Opacity[0.5]], 
+ PlotLabel -> "p(x) = a + bx + cx^2 + dy"]
